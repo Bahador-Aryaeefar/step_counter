@@ -32,6 +32,7 @@
                 document.getElementById("steps").innerText = "Steps: " + stepCount;
                 lastStepTime = now; // Update last step time
             }
+            document.getElementById("steps").innerText += `- ${acc.x}- ${acc.y}- ${acc.z}`
         }
 
         async function requestPermission() {
