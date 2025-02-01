@@ -18,23 +18,29 @@
 
     <script>
         let stepCount = 0;
-        let lastAcceleration = { x: 0, y: 0, z: 0 };
-        let threshold = 1.2; // Adjust for sensitivity
+        let lastX = 0, lastY = 0;
+        let lastStepTime = 0;
+        let threshold = 1.2; // Adjust sensitivity (1.2 is a good starting point)
+        let stepCooldown = 400; // Minimum time between steps (ms)
 
         function handleMotion(event) {
             let acc = event.accelerationIncludingGravity;
             if (!acc) return;
 
-            let deltaX = Math.abs(acc.x - lastAcceleration.x);
-            let deltaY = Math.abs(acc.y - lastAcceleration.y);
-            let deltaZ = Math.abs(acc.z - lastAcceleration.z);
+            let now = Date.now();
 
-            if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
+            // Only consider X and Y acceleration (ignore Z to avoid height changes)
+            let deltaX = Math.abs(acc.x - lastX);
+            let deltaY = Math.abs(acc.y - lastY);
+
+            if ((deltaX > threshold || deltaY > threshold) && (now - lastStepTime > stepCooldown)) {
                 stepCount++;
                 document.getElementById("steps").innerText = "Steps: " + stepCount;
+                lastStepTime = now; // Update last step time
             }
 
-            lastAcceleration = acc;
+            lastX = acc.x;
+            lastY = acc.y;
         }
 
         async function requestPermission() {
