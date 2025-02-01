@@ -7,48 +7,57 @@
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         #steps { font-size: 2em; margin-top: 20px; }
+        button { padding: 10px 20px; font-size: 1.2em; }
     </style>
 </head>
 <body>
     <h1>Step Counter</h1>
-    <p>Move your device to start counting steps.</p>
+    <p>Click the button below to allow motion tracking.</p>
+    <button id="enableMotion">Enable Step Tracking</button>
     <div id="steps">Steps: 0</div>
-    
+
     <script>
         let stepCount = 0;
         let lastAcceleration = { x: 0, y: 0, z: 0 };
-        let threshold = 1.2; // Adjust based on sensitivity
+        let threshold = 1.2; // Adjust for sensitivity
 
         function handleMotion(event) {
-            let acceleration = event.accelerationIncludingGravity;
-            if (!acceleration) return;
+            let acc = event.accelerationIncludingGravity;
+            if (!acc) return;
 
-            let deltaX = Math.abs(acceleration.x - lastAcceleration.x);
-            let deltaY = Math.abs(acceleration.y - lastAcceleration.y);
-            let deltaZ = Math.abs(acceleration.z - lastAcceleration.z);
+            let deltaX = Math.abs(acc.x - lastAcceleration.x);
+            let deltaY = Math.abs(acc.y - lastAcceleration.y);
+            let deltaZ = Math.abs(acc.z - lastAcceleration.z);
 
             if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
                 stepCount++;
                 document.getElementById("steps").innerText = "Steps: " + stepCount;
             }
 
-            lastAcceleration = acceleration;
+            lastAcceleration = acc;
         }
 
         async function requestPermission() {
             if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                const permission = await DeviceMotionEvent.requestPermission();
-                if (permission === 'granted') {
-                    window.addEventListener("devicemotion", handleMotion);
-                } else {
-                    alert("Permission denied for motion sensors.");
+                try {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission === 'granted') {
+                        window.addEventListener("devicemotion", handleMotion);
+                        document.getElementById("enableMotion").style.display = "none";
+                    } else {
+                        alert("Permission denied for motion sensors.");
+                    }
+                } catch (error) {
+                    alert("Error requesting permission: " + error);
                 }
             } else {
+                // Non-iOS devices don't need explicit permission
                 window.addEventListener("devicemotion", handleMotion);
+                document.getElementById("enableMotion").style.display = "none";
             }
         }
 
-        document.body.addEventListener("click", requestPermission);
+        document.getElementById("enableMotion").addEventListener("click", requestPermission);
     </script>
 </body>
 </html>
