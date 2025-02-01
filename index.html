@@ -37,10 +37,9 @@
                 stepCount++;
                 document.getElementById("steps").innerText = "Steps: " + stepCount;
                 lastStepTime = now; // Update last step time
+                lastX = acc.x;
+                lastY = acc.y;
             }
-
-            lastX = acc.x;
-            lastY = acc.y;
         }
 
         async function requestPermission() {
