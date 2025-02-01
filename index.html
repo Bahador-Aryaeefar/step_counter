@@ -18,9 +18,7 @@
 
     <script>
         let stepCount = 0;
-        let lastX = 0, lastY = 0, lastZ = 0;
         let lastStepTime = 0;
-        let threshold = 3; // Adjust sensitivity (1.2 is a good starting point)
         let stepCooldown = 1000; // Minimum time between steps (ms)
 
         function handleMotion(event) {
@@ -29,18 +27,10 @@
 
             let now = Date.now();
 
-            // Only consider X and Y acceleration (ignore Z to avoid height changes)
-            let deltaX = Math.abs(acc.x - lastX);
-            let deltaY = Math.abs(acc.y - lastY);
-            let deltaZ = Math.abs(acc.z - lastZ);
-
-            if ((deltaX > threshold || deltaY > threshold || deltaZ > threshold) && (now - lastStepTime > stepCooldown)) {
+            if ((Math.sqrt(acc.x*acc.x + acc.y*acc.y+ acc.z*acc.z)) && (now - lastStepTime > stepCooldown)) {
                 stepCount++;
                 document.getElementById("steps").innerText = "Steps: " + stepCount;
                 lastStepTime = now; // Update last step time
-                lastX = acc.x;
-                lastY = acc.y;
-                lastZ = acc.z;
             }
         }
 
