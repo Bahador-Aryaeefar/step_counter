@@ -29,10 +29,9 @@
 
             if ((Math.sqrt(acc.x*acc.x + acc.y*acc.y+ acc.z*acc.z) > 2) && (now - lastStepTime > stepCooldown)) {
                 stepCount++;
-                document.getElementById("steps").innerText = "Steps: " + stepCount;
                 lastStepTime = now; // Update last step time
             }
-            document.getElementById("steps").innerText += `- ${acc.x}- ${acc.y}- ${acc.z}`
+            document.getElementById("steps").innerText = "Steps: " + stepCount + `- ${acc.x}- ${acc.y}- ${acc.z}`
         }
 
         async function requestPermission() {
