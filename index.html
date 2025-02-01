@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step Counter</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #steps { font-size: 2em; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Step Counter</h1>
+    <p>Move your device to start counting steps.</p>
+    <div id="steps">Steps: 0</div>
+    
+    <script>
+        let stepCount = 0;
+        let lastAcceleration = { x: 0, y: 0, z: 0 };
+        let threshold = 1.2; // Adjust based on sensitivity
+
+        function handleMotion(event) {
+            let acceleration = event.accelerationIncludingGravity;
+            if (!acceleration) return;
+
+            let deltaX = Math.abs(acceleration.x - lastAcceleration.x);
+            let deltaY = Math.abs(acceleration.y - lastAcceleration.y);
+            let deltaZ = Math.abs(acceleration.z - lastAcceleration.z);
+
+            if (deltaX > threshold || deltaY > threshold || deltaZ > threshold) {
+                stepCount++;
+                document.getElementById("steps").innerText = "Steps: " + stepCount;
+            }
+
+            lastAcceleration = acceleration;
+        }
+
+        async function requestPermission() {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                const permission = await DeviceMotionEvent.requestPermission();
+                if (permission === 'granted') {
+                    window.addEventListener("devicemotion", handleMotion);
+                } else {
+                    alert("Permission denied for motion sensors.");
+                }
+            } else {
+                window.addEventListener("devicemotion", handleMotion);
+            }
+        }
+
+        document.body.addEventListener("click", requestPermission);
+    </script>
+</body>
+</html>
