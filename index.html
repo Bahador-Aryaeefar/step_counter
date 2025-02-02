@@ -20,11 +20,11 @@
         let stepCount = 0;
         let lastX = 0, lastY = 0, lastZ = 0;
         let lastStepTime = 0;
-        let threshold = 4.5; // Adjust sensitivity
+        let threshold = 3; // Adjust sensitivity
         let stepCooldown = 1000; // Minimum time between steps (ms)
 
         function handleMotion(event) {
-            let acc = event.accelerationIncludingGravity;
+            let acc = event.acceleration;
             if (!acc) return;
 
             let now = Date.now();
@@ -33,7 +33,7 @@
             let deltaY = Math.abs(acc.y - lastY);
             let deltaZ = Math.abs(acc.z - lastZ);
 
-            if ((deltaX > threshold || deltaY > threshold || deltaZ > threshold) && (now - lastStepTime > stepCooldown)) {
+            if ((Math.sqrt(acc.x*acc.x + acc.y*acc.y+ acc.z*acc.z) > 2) && (now - lastStepTime > stepCooldown)) {
                 stepCount++;
                 lastStepTime = now; // Update last step time
                 document.getElementById("steps").innerText = "Steps: " + stepCount;
