@@ -18,8 +18,14 @@
 
     <script>
         let stepCount = 0;
+        let lastX = 0, lastY = 0, lastZ = 0;
         let lastStepTime = 0;
+        let threshold = 3; // Adjust sensitivity (1.2 is a good starting point)
         let stepCooldown = 1000; // Minimum time between steps (ms)
+
+        let deltaX = Math.abs(acc.x - lastX);
+        let deltaY = Math.abs(acc.y - lastY);
+        let deltaZ = Math.abs(acc.z - lastZ);
 
         function handleMotion(event) {
             let acc = event.accelerationIncludingGravity;
@@ -27,11 +33,14 @@
 
             let now = Date.now();
 
-            if ((Math.sqrt(acc.x*acc.x + acc.y*acc.y+ acc.z*acc.z) > 2) && (now - lastStepTime > stepCooldown)) {
+            if ((deltaX > threshold || deltaY > threshold || deltaZ > threshold) && (now - lastStepTime > stepCooldown)) {
                 stepCount++;
                 lastStepTime = now; // Update last step time
+                document.getElementById("steps").innerText = "Steps: " + stepCount;
+                lastX = acc.x;
+                lastY = acc.y;
+                lastZ = acc.z;
             }
-            document.getElementById("steps").innerText = "Steps: " + stepCount + `- ${acc.x}- ${acc.y}- ${acc.z}`
         }
 
         async function requestPermission() {
