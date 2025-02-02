@@ -23,15 +23,15 @@
         let threshold = 3; // Adjust sensitivity (1.2 is a good starting point)
         let stepCooldown = 1000; // Minimum time between steps (ms)
 
-        let deltaX = Math.abs(acc.x - lastX);
-        let deltaY = Math.abs(acc.y - lastY);
-        let deltaZ = Math.abs(acc.z - lastZ);
-
         function handleMotion(event) {
             let acc = event.accelerationIncludingGravity;
             if (!acc) return;
 
             let now = Date.now();
+
+            let deltaX = Math.abs(acc.x - lastX);
+            let deltaY = Math.abs(acc.y - lastY);
+            let deltaZ = Math.abs(acc.z - lastZ);
 
             if ((deltaX > threshold || deltaY > threshold || deltaZ > threshold) && (now - lastStepTime > stepCooldown)) {
                 stepCount++;
